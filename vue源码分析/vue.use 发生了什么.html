@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>vue.use 发生了什么</title>
+</head>
+<body>
+	
+</body>
+</html>
+<script>
+	
+		//vue源码中定义的use方法：
+		// Vue.use() 中第一个参数传入的plugin, 调用了plugin中的install 方法，将Vue作为参数传入install方法中
+	    Vue.use = function (plugin) {
+	      var installedPlugins = (this._installedPlugins || (this._installedPlugins = []));
+	      if (installedPlugins.indexOf(plugin) > -1) {     // 判断Vue插件中是否已经引入改插件，避免重复引入
+	        return this
+	      }
+
+	      // additional parameters
+	      var args = toArray(arguments, 1);
+	      args.unshift(this);                         // 将Vue传入参数中
+	      if (typeof plugin.install === 'function') {  // 如果存在plugin.install 方法调用install方法
+	        plugin.install.apply(plugin, args);     
+	      } else if (typeof plugin === 'function') {  // 若plugin 是一个函数，调用plugin 方法
+	        plugin.apply(null, args);
+	      }
+	      installedPlugins.push(plugin);            //将插件放入插件数组中
+	      return this                               //return Vue 链接调用
+	    };
+
+
+	    // 再看插件中的install 方法，以Vuex为例
+	      function install (_Vue) {
+		    if (Vue && _Vue === Vue) {       // 判断Vue是否已经调用过Vue.use(Vuex)，调用后会将Vue赋值_Vue
+		      {
+		        console.error(
+		          '[vuex] already installed. Vue.use(Vuex) should be called only once.'
+		        );
+		      }
+		      return
+		    }
+		    Vue = _Vue;
+		    applyMixin(Vue);    // 将Vue作为参数调用applyMixin 方法
+		  }
+	  
+
+	
+
+  
+</script>
