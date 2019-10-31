@@ -32,7 +32,8 @@
 		d: function(){
 			console.log(1);
 		},
-		e: person
+		e: person,
+		f: new Date()
 	}
 
 	// JSON, 该方法不会处理属性上的Symbol 和function,不会对原型链进行继承
@@ -75,6 +76,7 @@
 	// Reflect.ownKeys 也可以得到所有的key 返回一个包含所有自身属性（不包含继承属性）的数组
 	console.log(Reflect.ownKeys(obj))
 	let deepClone4 = function(obj){
+		if(obj === null) return null;
 		let isArray = Object.prototype.toString.call(obj) === '[object Array]'? true: false;
 		let result = isArray ? [] : {};
 		if(isArray){
