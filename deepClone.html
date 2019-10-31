@@ -41,59 +41,55 @@
 		return JSON.parse(JSON.stringify(obj))
 	}
 
-	let result1 = deepClone1(obj);  console.log(result1);    
+	let result1 = deepClone1(obj);  
+	console.log('result1:', result1);    
 
 	// es6扩展
 	let deepClone2 = function(obj){
 		return Object.prototype.toString.call(obj) === '[object Array]'?[...obj]:{...obj}; 
 	}
-	let result2 = deepClone2(obj); console.log(result2)
+	let result2 = deepClone2(obj); 
+	console.log('result2:', result2)
 
 
 	// 递归遍历实现继承, 这种遍历方式不会处理Symbol属性
+	// Date 和 RegExp 无法被clone的问题
 	let deepClone3 = function(obj){
+		if(obj === null || typeof obj !== 'object') return obj;
+		if(obj.constructor === Date)  return new Date(obj);
+		if(obj.constructor === RegExp) return new RegExp(obj);
 		let isArray = Object.prototype.toString.call(obj) === '[object Array]'? true: false;
 		let result = isArray ? [] : {};
-		if(isArray){
-			for(let i=0; i<obj.length; i++){
-				result[i] = typeof(key) === 'object' ? deepClone3(obj) : obj[i];
-			}
-		}else{
-			for(let key in obj){
-				if(obj.hasOwnProperty(key)){
-					result[key] = typeof(key) === 'object' ? deepClone3(obj) : obj[key]
-				}
-			}	
-		}
-
-		return result;
+		Object.keys(obj).forEach(key => {
+			result[key] = deepClone3(obj[key])
+		})	
+		return result
 	}
 
-	let result3 = deepClone3(obj); console.log(result3);
+	let result3 = deepClone3(obj); 
+	console.log('result3:', result3);
 
 
 	// 对deepClone3进行优化，可获取到Symbol属性 Object.getOwnPropertySymbols
 	// Reflect.ownKeys 也可以得到所有的key 返回一个包含所有自身属性（不包含继承属性）的数组
-	console.log(Reflect.ownKeys(obj))
+	// console.log(Reflect.ownKeys(obj))
 	let deepClone4 = function(obj){
-		if(obj === null) return null;
-		let isArray = Object.prototype.toString.call(obj) === '[object Array]'? true: false;
-		let result = isArray ? [] : {};
-		if(isArray){
-			for(let i=0; i<obj.length; i++){
-				result[i] = typeof(key) === 'object' ? deepClone3(obj) : obj[i];
-			}
-		}else{
-			for(let key of Reflect.ownKeys(obj)){
-				result[key] = typeof(key) === 'object' ? deepClone3(obj) : obj[key]	
-			}	
-
+		if(obj === null || typeof(obj) !== 'object'){
+			return obj
 		}
 
-		return result;
+		if(obj.constructor === Date)  return new Date(obj);       //解决Date 和RegExp无法被clone
+		if(obj.constructor === RegExp) return new RegExp(obj);
+		let copy = Array.isArray(obj) ? [] : {};
+		Reflect.ownKeys(obj).forEach(key => {
+			copy[key] = deepClone4(obj[key])
+		})
+
+		return copy
+
 	}
 	
 	let result4 = deepClone4(obj);
-	console.log(result4);
+	console.log('result4:', result4);
 
 </script>
