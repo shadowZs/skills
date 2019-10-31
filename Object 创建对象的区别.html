@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>object 创建对象的三种方式及区别</title>
+</head>
+<body>
+	
+</body>
+</html>
+<script>
+	/*
+		创建对象的三种方法：Object.create(obj,propertiesObject), new Object, {}, obj必填，propertiesObject 可选，对象的属性和值
+		Object.create(obj) obj为继承的原型对象，只能为null或object,为null的时候，原型链不会继承Object原型链，new Object 和{}创建对象都会自动继承Object原型链
+	*/
+	let text = {a: 1}
+	let a = Object.create(null);  // Object.create() 必须有一个参数null/object
+	let b = new Object();
+	let c = {};
+	console.log(a, b, c); // a: No properties b,c都有__proto__属性，new Object与{}创建对象一一致
+
+
+	function Person(){
+		this.name = 'person'
+	}
+
+	let d = Object.create(Person.prototype, {     // propertiesObject 中属性的值必须为object
+		name: { 
+			value: 'nemo'
+		}
+	});
+
+	console.log(d, d.__proto__)     // Object第一个参数表述原型继承的对象
+
+	Object.create(Object.prototype) === new Object() === {}
+
+	console.log(new Object(text));   // 直接对对象赋值，类似于{a:1}
+</script>

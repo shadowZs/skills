@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>组合继承和寄生式继承</title>
+</head>
+<body>
+	
+</body>
+</html>
+<script>
+	/*
+		1.原型链继承
+		2.借用构造函数
+		3.原型链+借用构造函数 => 组合继承
+		4.寄生式继承
+	
+	*/
+
+	
+
+	function Person(age){
+		this.location = 'earth';
+		this.name = 'person'
+		this.age = age;
+	}
+
+	Person.prototype.eat = function(){
+		console.log(eat)
+	}
+
+	Person.prototype.sleep = function(){
+		console.log('sleep')
+	}
+
+	let p = new Person();
+
+	/*
+		原型链继承： Man.prototype = new Person()  通过改写原型链达到继承效果
+		优点：
+			1.子实例继承了所有构造函数和实例上的属性和方法
+		缺点：
+			1.子实例无法向父实例传参
+			2.子实例修改属性后，父实例的属性也会被修改
+		
+	*/
+
+	function Man(){
+		
+	}
+
+	Man.prototype = new Person();
+
+	Man.prototype.eat = function(){
+		console.log('man eat')
+	}
+
+	let m = new Man();
+	m.name = 'this is a man';
+	console.log(m, m.__proto__, m.constructor === Man)  // m.__proto__ => Person, m.constructor => Person(){} person 构造函数
+
+
+
+	/*
+		借用构造函数继承  apply,call,bind 实现继承
+		优点：
+			1.子实例可以向父实例传参
+			2.继承是一对一，不会改写父实例的数据，多个继承属性就要写多个call方法
+		缺点：
+			1.只能继承构造函数中的属性，无法对原型链的方法和属性继承	
+			2.无法实现复用，没次使用都要调用函数
+	*/
+
+	function Women(){
+		this.name = 'women';
+		Person.call(this, 11)
+	}
+
+	let w = new Women();
+	console.log(w);   // {name: "person", location: "earth", age: 11}  
+
+
+	/*
+		组合继承 = 原型链(继承原型链的属性和方法) + 借用构造函数(继承构造函数的属性和方法)
+		优点：
+		 	1.继承了父类原型上的属性和方法
+		 	2.可以传参，引入构造函数的属性都是私有的
+		缺点： Person.call 和 Father.prototype = new Person() 两次调用了父类的构造函数(消耗内存)	
+	*/
+
+	function Father(){
+		Person.call(this, 30);
+		this.name = 'father';
+	}
+	Father.prototype = new Person();
+
+	Father.prototype.hobby = function(){
+		console.log('play football')
+	}
+
+	let f = new Father();
+	console.log(f, f.age, f.name, f.location)
+
+
+	/*
+		原型式继承 = 用函数包装返回, Object.create() 用此方式
+		优点：实例都会继承原型链上的方法和属性
+		缺点：无法实现复用
+	*/
+	function inHerit(obj){
+		function F(){};
+
+		F.prototype = obj;
+		return new F()
+	}
+
+	let inH = inHerit(Person);
+	inH['name'] = 'inHerit'   
+	console.log('inH:', inH.name, inH)  // Person, 原型链上有name属性则无法赋值？========================================>
+
+
+	/*
+		寄生式继承：采用原型式继承 + 一层封装用定义属性
+		优点：通过函数返回实例
+		缺点： 无法复用
+	
+	*/
+	function chain(obj){
+		let mid = inHerit(obj);
+		mid.name = 'chain';
+		mid.type = 'chain';
+		mid.age = 20;
+		return mid
+	}
+
+	let ch = chain(Person);
+	ch.name = '123'
+	console.log('ch',ch, ch.name, ch.type)
+
+
+	/*
+		寄生式组合继承：寄生式 + 借用构造函数
+	
+	*/
+
+	// function Child(age){
+	// 	Person.call(this, age)
+	// }
+
+	// function inHeritSuper(obj){
+	// 	function S(){};
+	// 	S.prototype = obj;
+	// 	return new S();
+	// }
+
+	// let middle = inHeritSuper(Person.prototype);
+	// middle.constructor = Child;    // ======> 为啥要修复
+	// Child.prototype = middle
+
+	// let c = new Child(6);
+	// console.log('child:', c, c.constructor)  // age:6  Child
+
+
+	// ================================================ 优化
+
+	function inHeritSuper(sub, sup){
+		sub.prototype = Object.create(sup.prototype);
+
+		Object.setPrototypeOf(sub, sup);   // setPrototypeOf方法设置一个指定的对象的原型
+
+	}
+
+	inHeritSuper(Child, Person);
+	let child = new Child(12);
+	console.log('child', child, child.age, child.constructor) //Person
+
+
+
+</script>
