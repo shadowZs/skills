@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>instanceof的原理</title>
+</head>
+<body>
+	
+</body>
+</html>
+<script>
+	/*
+		instanceof的原理： instanceof判断一个引用属于某个构造函数
+
+	*/
+
+	let obj = {};
+	// console.log(obj instanceof(Object));  // true
+
+
+
+	function Person(){
+		this.name = 'person'
+	}
+
+	function Man(){
+		this.name = 'man';
+
+	}
+
+
+	// instanceof 是通过__proto__对原型链进行逐层来判断，l.__proto__ === r.prototype;来判断原型
+	let myInstanceOf = function(left, right){
+		let l = left.__proto__;
+		let r = right.prototype;
+		while(true){  
+			if(l === null){
+				return false;
+			}
+
+			if(l === r){
+				return true
+			}
+
+			l = l.__proto__;
+			console.log('l:', l);
+		}
+	}
+
+
+	Man.prototype = new Person();
+
+	let man = new Man();
+	console.log(man.__proto__); // --->  new Person
+	console.log(man.constructor);   // ---> Person 构造函数
+	console.log(Man.prototype);    // ---> new Person
+	console.log('isPrototypeOf:',Man.prototype.isPrototypeOf(man));  // true;
+	console.log('isPrototypeOf:', Person.prototype.isPrototypeOf(man)) // true
+
+	console.log('man->Man', man instanceof Man);             // true
+	console.log('man->Person', man instanceof Person)        // true
+	console.log('man->myInstanceOf->Man', myInstanceOf(man, Man));
+	console.log('man->myInstanceOf->Person', myInstanceOf(man, Person));
+
+
+</script>

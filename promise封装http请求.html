@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>promise封装http请求</title>
+</head>
+<body>
+	
+</body>
+</html>
+<script>
+	/*
+		promise封装http请求
+		option: method GET/POST
+				params
+		使用: http(option).then(res=> res)	
+	
+	*/
+
+	let http = function(option){
+		return new Promise(function(resolve, reject){
+			let xml = new XMLHttpRequest();
+			xml.onReadyStateChange = function(){
+				if(xml.readyState === 4 && xml.status === 200){
+					resolve(xml.responseText)
+				}else{
+					reject(xml.responseText)
+				}
+			}
+			xml.open();
+			xml.send(option.method ? option.method : 'GET', option.params, true)
+		})	
+	}
+</script>
