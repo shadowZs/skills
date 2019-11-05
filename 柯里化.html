@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>柯里化实现</title>
+</head>
+<body>
+	
+</body>
+</html>
+<script>
+	/*
+		柯里化： 把多参数函数转换成单参数函数的函数，并且返回接受余下的参数且返回结果的函数  a(1,2)---> a(1)(2)
+
+
+	*/
+
+	// a(1)(2)(3) = 6
+	// a(1, 2)(3) = 6
+	let curryAdd = function(){
+		let args = [...arguments] || [];
+
+		let _add = function(){
+			args.push(...arguments);
+			return _add
+		}
+
+		// 利用toString隐式转换的特性，当最后执行时隐式转换，并计算最终的值返回
+		_add.toString = function(){
+			return args.reduce((pre, cur) => {
+				return pre + cur
+			})
+		}
+
+		return _add;
+	}
+
+
+	// 柯里化装饰器 @curry
+	let curry = function(fn){
+		let args = [];
+		let g = function(){
+			args.push(...arguments);
+			return g
+		}
+
+		g.toString = function(){
+			return fn.apply(fn, args);
+		}
+
+		return g;
+	}
+
+	let add = function(...args){
+		return [...args].reduce((total, curr) => {
+			return total * curr;
+		})
+	}
+
+	let _add = curry(add);
+	let s = _add(1)(2)(3)(4)
+	console.log('result:', s);
+</script>

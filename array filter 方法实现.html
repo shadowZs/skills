@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>filter方法实现</title>
+</head>
+<body>
+	
+</body>
+</html>
+<script>
+	/*
+		filter() 方法创建一个新的数组，新数组中的元素是通过检查指定数组中符合条件的所有元素。
+	*/
+
+	Array.prototype.myFilter = function(fn, thisValue){
+		let result = [];
+		let arr = this;
+		arr.forEach(item => {
+			if(fn.call(thisValue, item)){
+				result.push(item)
+			}
+		})
+
+		return result;
+	}
+
+	let array = [1,2,3]
+	
+
+	// reduce 实现filter
+	Array.prototype.myFilter1 = function(fn, thisValue){
+		let init = [];
+		let arr = this;
+		return arr.reduce((pre, cur) => {
+			return fn.call(thisValue, cur) ? [...pre,cur] : [...pre]
+		},init)
+	}
+
+
+	let s = array.myFilter1(function(item){
+		return item > 1
+	})
+	console.log(s);
+</script>

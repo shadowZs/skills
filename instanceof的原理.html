@@ -29,7 +29,7 @@
 	}
 
 
-	// instanceof 是通过__proto__对原型链进行逐层来判断，l.__proto__ === r.prototype;来判断原型
+	// instanceof 是通过__proto__对原型链进行逐层来判断，l.__proto__ === r.prototype;
 	let myInstanceOf = function(left, right){
 		let l = left.__proto__;
 		let r = right.prototype;

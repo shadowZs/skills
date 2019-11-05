@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>apply, bind, call 的实现</title>
+</head>
+<body>
+	
+</body>
+</html>
+<script>
+	/*
+		apply、bind、call的实现，都可以改变this的指向，实现继承效果
+		apply: 参数是数组，并立即执行 
+		bind:  参数是arguments，并不会执行
+		call:  参数是arguments，会立即执行
+	*/
+
+	let a = {name: 'nemo', age: 22};
+	let say = function(...args){
+		console.log(this.name);
+		console.log(...args)
+	}
+
+	// call
+	Function.prototype.myCall = function(context, ...args){
+		if(typeof this !== 'function'){
+			throw new TypeError('this is not a function')
+		}
+
+		context.fn = this;
+		let result = context.fn(...args);
+		delete context.fn;
+		return result;
+	}	
+
+	// say.myCall(a,1,2,3);    // nemo
+
+
+	// apply 
+	Function.prototype.myApply = function(context, [...args]){
+		if(typeof this !== 'function'){
+			throw new TypeError('this is not a function')
+		}
+
+		context.fn = this;
+		let result = context.fn(...args)
+		delete context.fn;
+		return result;
+	}
+
+	// say.myApply(a,[1,2,3])
+
+
+	// bind 是基于call实现, 返回的是一个函数
+	Function.prototype.myBind = function(context, ...args1){
+		if(typeof this !== 'function'){
+			throw new TypeError('this is not a function')
+		}
+
+		let _this = this;
+		// return function F(...args2){
+		// 	if(this instanceof F){
+		// 		return new _this(...args1,...args2)
+		// 	}else{
+		// 		return _this.call(context, ...args1, ...args2)
+		// 	}
+		// }
+
+		delete context.fn;
+		return result;
+	}
+
+	let bind = say.myBind(a, 1,2,3);
+	bind(123);
+
+</script>

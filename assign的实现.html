@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Object.assign的实现</title>
+</head>
+<body>
+	
+</body>
+</html>
+<script>
+	/* 
+		Object.assign是一层浅拷贝，Object.assign(target, source1, source2, ...)
+		symbol属性通过Object.getOwnPropertySymbols来遍历
+		普通可遍历属性通过 Object.keys来遍历
+	*/
+
+	Object.myAssign = function(target, ...source){
+		if(typeof target === null) {
+			throw new TypeError('target should be a object')
+		}
+
+		return source.reduce((pres, curr) => {
+			if(curr == null) return pres;
+			let symbol = Object.getOwnPropertySymbols(curr);   // 遍历Symbol属性
+			let currKeys = Object.keys(curr);
+			[...currKeys, ...symbol].forEach(key => {
+				pres[key] = curr[key]
+			})
+			return pres
+		}, target)
+	}
+
+	let a = {a:1, b: 2, c: 3, [Symbol('a')]:'symbol'}; 
+	console.log(a);
+	let b = {a:1, b: 2}
+
+	let xx = Object.keys(b);
+
+</script>
