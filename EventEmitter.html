@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>EventEmitter</title>
+</head>
+<body>
+	
+</body>
+</html>
+<script>
+	/*
+		eventEmitter 就是一个事件队列，核心是事件触发和事件监听器功能的封装
+		addListener(event, listener): 为事件添加一个监听器到尾部
+		on(event, listener): 未指定事件注册一个监听器，参数 event,callback
+		once(event, listener): 注册一个单次监听器，监听器触发后立即会解除
+		off(event, listener): 删除监听器，会改变被删之后监听器的索引
+		emit(event, args1, args2...): 按监听器的次序依次执行每个监听器，如有注册监听true,没有false
+		removeAllListener(event): 移除所有事件的所有监听器，如有指定事件，则移除指定的监听器
+
+	*/
+
+	class EventEmitter{
+		constructor(){
+			this._events = {};    
+		}
+
+		on(event, listener){
+			(this._events[event] || (this._events[event] = [])).push(listener);
+
+		}
+
+		once(event, listener){
+			let onceCb = function(...args){
+				listener(...args);
+				this.off(event, listener);
+			}
+			
+			this.on(event, onceCb);
+			
+		}	
+
+		off(event, listener){
+			let index = this._events[event].indexOf(listener);
+			this._events[event].splice(index, 1)
+		}
+
+		emit(event, ...args){
+			this._events[event].forEach(fn => {
+				fn.apply(this, ...args);
+			})
+
+			console.log(this._events);
+		}
+
+	}
+
+	function say(){
+		console.log('say hi')
+	}
+
+	function bye(){
+		console.log('say bye');
+	}
+	function once(){
+		console.log('once');
+	}
+
+	let ev = new EventEmitter();
+
+
+	ev.on('click', say)
+	ev.on('move', bye)
+	ev.emit('click');
+	ev.emit('move');
+
+	console.group();
+	ev.once('n', once)
+	ev.emit('n')
+
+	console.group();
+
+</script>
