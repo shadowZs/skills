@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>promise 源码分析</title>
+</head>
+<body>
+	
+</body>
+</html>
+<script src='./promise.js'></script>
+<script>
+	/*
+
+	*/
+
+	// let p = new Promise(function(resolve, reject){
+	// 	resolve();
+	// 	setTimeout(() => {
+	// 		console.log(1)
+	// 	})
+
+	// 	console.log(2)
+	// }).then(res => {
+	// 	console.log(3)
+	// })
+
+	// console.log(4)
+
+	// 2,4,3,1
+
+async function async1() {
+    console.log('async1 start')
+    await async2()
+    console.log('async1 end')
+}
+async function async2() {
+    console.log('async2')
+}
+console.log('script start')
+setTimeout(function () {
+    console.log('settimeout')
+})
+async1()
+new Promise(function (resolve) {
+    console.log('promise1')
+    resolve()
+}).then(function () {
+    console.log('promise2')
+})
+console.log('script end')
+
+</script>
