@@ -7,7 +7,7 @@
 /**
  * @this {Promise}
  */
-function finallyConstructor(callback) {
+function finallyConstructor(callback) {    // 返回一个Promise,
   var constructor = this.constructor;
   return this.then(
     function(value) {

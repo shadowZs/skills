@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>作用域的探究</title>
+</head>
+<body>
+	
+</body>
+</html>
+<script>
+	/*	
+		改造代码，输出0-9
+		for (var i = 0; i< 10; i++){
+			setTimeout(() => {
+				console.log(i);
+		    }, 1000)
+		}
+		
+		
+	*/
+	// 这样会打印出0-9	
+	// for (var i = 0; i< 10; i++){
+	// 	console.log(i);   // 0-9
+	// } 
+
+
+	/*
+		for循环中加入setTimeout异步，会打印出10个10
+		setTimeout 是异步, 而for循环是同步的，javascript是单线程，会优先执行同步代码，for循环执行完成后才会执行setTimeout，此时遍历已完成i=10; 此处var 申明了一个全局变量i;所有打印都指向同一个指针
+		解决方案：
+			1.es6 let 有独立作用域的变量, 作用域是根据{}来确定的，故每次遍历都会重新申明一个let, let有一个作用域{}内的。故可以打印出0-9
+			2.闭包 在es6以前只有函数有作用域，借助函数形成有自己作用域的变量.
+			  闭包是能够读取其他函数内部变量的函数，
+	*/
+
+
+	// for (var j = 0; j< 10; j++){
+	// 	setTimeout(() => {
+	// 		console.log(j);
+	//     }, 1000)
+	// }
+
+
+	// 方案1： let
+	// for(let k=0; k<10; k++){
+	// 	setTimeout(() => {
+	// 		console.log(k)
+	// 	}, 1000)
+	// }	
+
+	// 方案2： 闭包
+		// for(var m=0; m<10; m++){
+		// 	(function(m){
+		// 		setTimeout(() => {
+		// 			console.log(m)
+		// 		})
+		// 	})(m)
+
+		// }
+
+	// 方案3：setTimeout 第三个参数，会作为回调函数的第一个参数
+	// for(var n=0; n<10; n++){
+	// 	setTimeout(function(n){
+	// 		console.log(n);
+	// 	}, 1000, n)
+	// }
+
+
+ 	// 方案4：
+	// for (var i = 0; i< 10; i++){
+	// 	setTimeout(console.log(i), 1000)  
+	// }
+
+
+	// 方案5：利用try/catch的块级作用域也能实现目的: try throw 抛出i，catch捕获i
+	for(var i=0; i<10; i++){
+		try{
+			throw i;
+		}catch(i){
+			setTimeout(() => console.log(i), 100)
+		}
+	}
+</script>
